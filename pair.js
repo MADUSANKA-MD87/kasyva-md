@@ -1563,7 +1563,7 @@ case 'menu': {
     }
 
     const MENU_IMG = 'https://i.ibb.co/G4sC7pfv/489f4e2f7ff7.jpg'
-☘️ *DCT MADUSANKA MD URL CONVERTER*
+☘️ *DCT CRIMINAL MD URL CONVERTER*
 
 📂 *Type:* Image
 📋Š *Size:* 0.07 MB
