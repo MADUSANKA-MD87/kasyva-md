@@ -1551,7 +1551,7 @@ Reply:
 case 'menu': {
   try {
     await socket.sendMessage(sender, {
-      react: { text: "🍾", key: msg.key }
+      react: { text: "🫀", key: msg.key }
     });
 
     // ================= USER CONFIG =================
@@ -1562,8 +1562,8 @@ case 'menu': {
       userCfg = await loadUserConfigFromMongo(cleanNumber) || {};
     }
 
-    const MENU_IMG = "
-☘️ *DCT CRIMINAL MD URL CONVERTER*
+    const MENU_IMG = 'https://i.ibb.co/G4sC7pfv/489f4e2f7ff7.jpg'
+☘️ *DCT MADUSANKA MD URL CONVERTER*
 
 📂 *Type:* Image
 📋Š *Size:* 0.07 MB
