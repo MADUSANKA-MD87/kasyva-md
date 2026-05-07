@@ -837,7 +837,7 @@ function setupCommandHandlers(socket, number) {
 ◈━━━━━━━━━━━━━━◈
        *${BOT_NAME}*
 ◈━━━━━━━━━━━━━━◈
-│ 👤 Owner : ${OWNER_NAME}
+│ 🥷 Owner : ${OWNER_NAME}
 │ 👤 Hey : ${userTag}
 ◈━━━━━━━━━━━━━━◈
 │ 🔍  SELECT YOUR MENU
