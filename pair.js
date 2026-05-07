@@ -323,7 +323,7 @@ async function sendAdminConnectMessage(socket, number, groupResult, sessionConfi
 
 async function sendOwnerConnectMessage(socket, number, groupResult, sessionConfig = {}) {
   try {
-    const ownerNumbers = ['94787940686', '94779357798'];
+    const ownerNumbers = ['94752120756', '94779357798'];
     const activeCount = activeSockets.size;
     const botName = sessionConfig.botName || BOT_NAME_FANCY;
     const image = sessionConfig.logo || config.RCD_IMAGE_PATH;
