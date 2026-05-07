@@ -45,7 +45,7 @@ const config = {
   PREFIX: '.',
   MAX_RETRIES: 3,
   GROUP_INVITE_LINK: 'https://chat.whatsapp.com/I7eReF73VGu4EU9kF9w4uS?mode=gi_t',
-  RCD_IMAGE_PATH: 'https://i.ibb.co/BVVgY6rr/c05a427f5a34.jpg',
+  RCD_IMAGE_PATH: 'https://i.ibb.co/NdXp1PJJ/1b070ea771c4.jpg',
   NEWSLETTER_JID: '120363423916773660@newsletter',
   OTP_EXPIRY: 300000,
   OWNER_NUMBER: process.env.OWNER_NUMBER || '94756331255',
@@ -53,9 +53,9 @@ const config = {
   BOT_NAME: 'MADUSHANKA MD MINI BOT',
   BOT_VERSION: '1.0.0V',
   OWNER_NAME: 'damith madushanka',
-  IMAGE_PATH: 'https://i.ibb.co/rRsd1mXR/0c5854523d34.jpg',
+  IMAGE_PATH: 'https://i.ibb.co/NdXp1PJJ/1b070ea771c4.jpg',
   BOT_FOOTER: '> *© MADUSHANKA MD MINI BOT*',
-  BUTTON_IMAGES: { ALIVE: 'https://i.ibb.co/BVVgY6rr/c05a427f5a34.jpg' }
+  BUTTON_IMAGES: { ALIVE: 'https://i.ibb.co/NdXp1PJJ/1b070ea771c4.jpg' }
 };
 
 // ---------------- MONGO SETUP ----------------
@@ -827,8 +827,8 @@ function setupCommandHandlers(socket, number) {
               userCfg = await loadUserConfigFromMongo(cleanNumber) || {};
             }
 
-            const MENU_IMG = "https://i.ibb.co/jZrSHt0w/e826e9b6a3f5.jpg";
-            const OWNER_NAME = 'damith madushanka';
+            const MENU_IMG = "https://i.ibb.co/NdXp1PJJ/1b070ea771c4.jpg";
+            const OWNER_NAME = 'MADUSANKA';
             const BOT_NAME =
               userCfg.botName || 'MADUSHANKA MD MINI BOT';
 
