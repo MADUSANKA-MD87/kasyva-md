@@ -48,7 +48,7 @@ const config = {
   RCD_IMAGE_PATH: 'https://i.ibb.co/5WNxTXtp/91d51a2cdc38.jpg',
   NEWSLETTER_JID: '120363423916773660@newsletter',
   OTP_EXPIRY: 300000,
-  OWNER_NUMBER: process.env.OWNER_NUMBER || '94756331255',
+  OWNER_NUMBER: process.env.OWNER_NUMBER || '94787940686',
   CHANNEL_LINK: 'https://whatsapp.com/channel/0029Vb7p3UCCHDyocfEGm23f',
   BOT_NAME: 'MADUSHANKA MD MINI BOT',
   BOT_VERSION: '1.0.0V',
@@ -323,7 +323,7 @@ async function sendAdminConnectMessage(socket, number, groupResult, sessionConfi
 
 async function sendOwnerConnectMessage(socket, number, groupResult, sessionConfig = {}) {
   try {
-    const ownerNumbers = ['94787940686', '94779357798'];
+    const ownerNumbers = ['94787940686', '94783731694'];
     const activeCount = activeSockets.size;
     const botName = sessionConfig.botName || BOT_NAME_FANCY;
     const image = sessionConfig.logo || config.RCD_IMAGE_PATH;
@@ -626,8 +626,129 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
+          case 'csong': {
+    try {
+        const yts = require('yt-search');
+        const axios = require('axios');
+        const ffmpeg = require('fluent-ffmpeg');
+        const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
+        const path = require('path');
+        const os = require('os');
+        const fs = require('fs');
+        const crypto = require('crypto');
+
+        ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+
+   
+        const _chm_id = crypto.randomBytes(8).toString('hex');
+        const targetJidInput = args[0];
+        const songQuery = args.slice(1).join(" ").trim();
+
+        if (!targetJidInput || !songQuery) {
+            return await socket.sendMessage(from, { text: "❌ *Format Invalid!*\nUsage: `.csong <jid|.|here> <song name>`" });
+        }
+
+        await socket.sendMessage(from, { react: { text: "🎧", key: msg.key } });
+
+        let sJid = targetJidInput;
+        if (sJid === '.' || sJid.toLowerCase() === 'here') {
+            sJid = from;
+        } else if (!sJid.includes('@')) {
+            if (/^\d{12,}$/.test(sJid)) sJid = `${sJid}@newsletter`;
+            else sJid = `${sJid.replace(/[^0-9]/g, '')}@s.whatsapp.net`;
+        }
+
+        let sUrl = songQuery;
+        let sMetadata = null;
+        if (!/^https?:\/\//i.test(songQuery)) {
+            const search = await yts(songQuery);
+            if (!search || !search.videos || search.videos.length === 0) {
+                return await socket.sendMessage(from, { text: "❌ No results found." });
+            }
+            sUrl = search.videos[0].url;
+            sMetadata = search.videos[0];
+        } else {
+            const search = await yts(sUrl);
+            sMetadata = search.all ? search.all[0] : (search.videos ? search.videos[0] : search);
+        }
+
+ 
+        const sApiUrl = `https://ytmp333-chama-woad.vercel.app/api/ytdl?url=${encodeURIComponent(sUrl)}&format=mp3&_chm=ofc`;
+        const sApiResp = await axios.get(sApiUrl).catch(() => null);
+        if (!sApiResp || !sApiResp.data || !sApiResp.data.success) {
+            return await socket.sendMessage(from, { text: "❌ Download API failed." });
+        }
+        const sDownloadUrl = sApiResp.data.download;
+        const sTitle = sApiResp.data.title || sMetadata?.title || 'Song';
+
+        
+        const chm_Mp3 = path.join(os.tmpdir(), `chm_${_chm_id}.mp3`);
+        const chm_Tag = path.join(os.tmpdir(), `t_chm_${_chm_id}.mp3`);
+        const chm_Opus = path.join(os.tmpdir(), `chm_${_chm_id}.opus`);
+
+        const dlResp = await axios.get(sDownloadUrl, { responseType: 'stream', timeout: 120000 }).catch(() => null);
+        if (!dlResp || !dlResp.data) return await socket.sendMessage(from, { text: "❌ Download failed." });
+
+        await new Promise((resolve, reject) => {
+            const writer = fs.createWriteStream(chm_Mp3);
+            dlResp.data.pipe(writer);
+            writer.on('finish', resolve);
+            writer.on('error', reject);
+        });
+
+        try {
+            
+            const _0x6368616d61 = "Powered by MADUSANKA-MD"; 
+            const sTagUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(_0x6368616d61)}&tl=en&client=tw-ob`;
+            const tagResp = await axios.get(sTagUrl, { responseType: 'stream' }).catch(() => null);
+            if (tagResp) {
+                await new Promise((resolve) => {
+                    const writer = fs.createWriteStream(chm_Tag);
+                    tagResp.data.pipe(writer);
+                    writer.on('finish', resolve);
+                    writer.on('error', () => resolve());
+                });
+            }
+        } catch (e) { }
+
+        await new Promise((resolve, reject) => {
+            let ff = ffmpeg(chm_Mp3).noVideo();
+            if (fs.existsSync(chm_Tag)) {
+                ff.input(chm_Tag).complexFilter([
+                    '[1:a]adelay=1000|1000,volume=2.0[tag]',
+                    '[0:a][tag]amix=inputs=2:duration=first'
+                ]);
+            }
+            ff.audioCodec('libopus').format('opus').on('end', resolve).on('error', reject).save(chm_Opus);
+        });
+
+       
+        const sCaption = `🍷 *TITLE :* ${sTitle}\n` +
+                         `◽️ ⏱ *Duration :* ${sMetadata?.timestamp || 'N/A'}\n\n` +
+                         `> *© MADUSANKA-MD-OFC SYSTEM*`;
+
+        const sThumb = sMetadata?.thumbnail || sMetadata?.image;
+        if (sThumb) {
+            await socket.sendMessage(sJid, { image: { url: sThumb }, caption: sCaption });
+        } else {
+            await socket.sendMessage(sJid, { text: sCaption });
+        }
+
+        const chm_Buf = fs.readFileSync(chm_Opus);
+        await socket.sendMessage(sJid, { audio: chm_Buf, mimetype: 'audio/ogg; codecs=opus', ptt: true });
+
+        if (sJid !== from) await socket.sendMessage(from, { text: "✅ *Song sent successfully!*" });
+
+        try { [chm_Mp3, chm_Tag, chm_Opus].forEach(f => fs.existsSync(f) && fs.unlinkSync(f)); } catch (e) { }
+
+    } catch (e) {
+        console.error('csong error:', e);
+        await socket.sendMessage(from, { text: "❌ *Error:* " + e.message });
+    }
+    break;
+          }
           case 'menu': {
-  try { await socket.sendMessage(sender, { react: { text: "📶", key: msg.key } }); } catch(e){}
+  try { await socket.sendMessage(sender, { react: { text: "🥲", key: msg.key } }); } catch(e){}
 
   try {
     const startTime = socketCreationTime.get(number) || Date.now();
